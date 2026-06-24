@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام مدرستي </title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+  </script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{direction:rtl;background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1516979187457-637abb4f9353');
+
+background-size:cover;background-position:center;min-height:100vh}
+.container{width:95%;max-width:1200px;margin:auto;padding:20px}
+.header{
+text-align:center;
+color:#fff;
+padding:20px;
+position:relative;
+} 
+.logo{width:120px;
+  height:120px;
+  border-radius:50%;
+  border:4px solid #fff;
+  object-fit:cover;
+  margin-bottom:15px}
+  
+.card{background:#fff;
+  padding:18px;
+  border-radius:18px;
+  margin-bottom:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25)}
+  
+.section-title{font-size:22px;
+  font-weight:bold;
+  color:#16a085;
+  margin-bottom:15px}
+  
+input,select,textarea{width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:1px solid #ccc}
+  
+button{width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  color:#fff;
+  margin-top:8px;
+  font-size:15px;
+  background:linear-gradient(45deg,#16a085,#1abc9c)}
+  
+button:hover{opacity:.9}
+.admin{background:#2c3e50}
+.logout{background:#e74c3c}
+.pay{background:#3498db}
+.danger{background:#c0392b}
+.dark-btn{background:#111}
+.table-box{overflow-x:auto}
+
+table{width:100%;
+  border-collapse:collapse;
+  margin-top:10px}
+  
+th,td{border:1px solid #eee;
+  padding:10px;text-align:center}
+  
+th{background:#16a085;
+  color:#fff}
+  
+.info-box{background:#f7f7f7;
+  padding:10px;border-radius:10px;
+  margin-bottom:10px}
+  
+.student-img{width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  margin:auto auto 15px;
+  border:4px solid #16a085}
+  
+.stats{display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px}
+  
+.stat-box{background:#16a085;
+  color:#fff;
+  padding:20px;border-radius:15px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold}
+  
+.badge{padding:5px 10px;
+  border-radius:8px;
+  color:#fff;
+  font-size:13px}.high{background:#27ae60}.medium{background:#f39c12}.low{background:#c0392b}
+  
+.dark-mode{background:#111!important;
+  color:#fff}
+  
+.dark-mode.card{background:#1e1e1e;
+   color:#fff}
+   
+.dark-mode input,.dark-mode textarea,
+.dark-mode select{background:#2a2a2a;
+  color:#fff;
+  border:1px solid #555}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:14px 25px;border-radius:12px;color:#fff;display:none;z-index:9999;background:#16a085;font-weight:bold}
+.success{background:#27ae60!important}.error{background:#c0392b!important}
+.schedule-input{
+min-width:120px;
+text-align:center;
+font-weight:bold;
+background:#f9f9f9;
+}
+
+.schedule-day{
+background:#16a085;
+color:#fff;
+font-weight:bold;
+}
+
+.dark-mode .schedule-input{
+background:#2a2a2a;
+color:#fff;
+} 
+.ai-box{
+background:linear-gradient(45deg,#0f2027,#203a43,#2c5364);
+padding:20px;
+border-radius:18px;
+color:white;
+margin-top:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.3)
+}
+
+.ai-title{
+font-size:24px;
+font-weight:bold;
+margin-bottom:15px;
+text-align:center
+}
+
+.ai-answer{
+background:rgba(255,255,255,.1);
+padding:15px;
+border-radius:12px;
+margin-top:15px;
+line-height:2
+}
+
+.ai-btn{
+background:linear-gradient(45deg,#8e44ad,#9b59b6)
+}
+.action-btn {
+    margin-bottom: 20px !important; /* مسافة 20 بكسل تحت كل زر */
+    width: 100%;
+}
+ 
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="container">
+<div class="header">
+
+<div style="position:absolute; top:10px; left:10px; font-size:11px; color:white; opacity:.8;">
+<p> abn abd Alshafy</p> 
+<u><h3><a href="https://wa.me/201018428738" target="_blank" title="مراسلة ">واتساب</a></h3></u> 
+</div>
+
+<h1 id="schoolName"><p> 📚مدرستي </p></h1>
+
+</div>
+
+<div class="card" id="loginCard">
+<div class="section-title">تسجيل الدخول</div>
+<input id="name" placeholder="الاسم أو البريد الإلكتروني">
+<input id="password" type="password" placeholder="كلمة السر">
+<button onclick="loginStudent()">دخول طالب</button>
+<button class="admin" onclick="loginAdmin()">دخول أدمن</button>
+<button class="dark-btn" onclick="toggleDarkMode()">🌙 الوضع الليلي</button>
+</div>
+<div id="result"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js">
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js">
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js">
+</script>
+
+<script>
+  window.isAdminLoggedIn = false;
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC-Cx5sl4iw4iBS1AE63UGlBMQd7E8elXo",
+    authDomain: "madrasty-10854.firebaseapp.com",
+    projectId: "madrasty-10854",
+    storageBucket: "madrasty-10854.appspot.com",
+    messagingSenderId: "295065024669",
+    appId: "1:295065024669:web:adb6acbb945f75fce1fc74",
+    measurementId: "G-N2P1YK4TZT"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+db.collection("test").add({
+    message: "تجربة اتصال ناجحة",
+    time: new Date()
+})
+.then(() => console.log("✅ البيانات وصلت للسيرفر!"))
+.catch((err) => console.error("❌ خطأ:", err));
+
+
+
+  db.collection('students').onSnapshot((querySnapshot) => {
+    let students = [];
+    querySnapshot.forEach((doc) => {
+      students.push(doc.data());
+    });
+    // حفظ البيانات محلياً ليتم عرضها في الجدول
+    localStorage.setItem('students', JSON.stringify(students));
+    
+    // هذا الجزء هو المسؤول عن تحديث الجدول فور إضافة طالب جديد
+    if (window.isAdminLoggedIn && typeof showAdminPanel === 'function') {
+      showAdminPanel();
+    }
+    
+
+    else if (typeof currentStudent !== 'undefined' && currentStudent) {
+      let updatedStudent = students.find(s => s.id === currentStudent.id);
+      if (updatedStudent) {
+        currentStudent = updatedStudent;
+        showStudent(currentStudent);
+      }
+    }
+  }, (error) => {
+     console.log("🔒 بانتظار تسجيل دخول الأدمن للوصول للبيانات السحابية.");
+  });
+
+  console.log("✅ تم ربط نظام مدرستي بسيرفرات جوجل بنجاح!");
+</script>
+<script>
+let currentStudent=null;
+const schoolDays=[
+'الأحد',
+'الإثنين',
+'الثلاثاء',
+'الأربعاء',
+'الخميس'
+];
+
+if(!localStorage.getItem('students')) 
+localStorage.setItem('students',JSON.stringify([]));
+
+if(localStorage.getItem('schoolName')){
+  let title=document.getElementById('schoolName');
+  if(title) {
+    title.innerText=localStorage.getItem('schoolName');
+    title.style.display='block';
+  }
+}
+
+function showToast(msg,type='success'){
+  let t=document.getElementById('toast');
+  t.innerHTML=msg;
+  t.className='';
+  t.classList.add(type);
+  t.style.display='block';
+  setTimeout(()=>{t.style.display='none'},3000)
+}
+  
+function toggleDarkMode(){document.body.classList.toggle('dark-mode')}
+
+function loginStudent()
+{
+  let name=document.getElementById('name').value.trim();
+  
+  let password=document.getElementById('password').value.trim();
+  
+  let students=JSON.parse(localStorage.getItem('students'))||[];
+  
+  let student=students.find(s=>s.name===name&&s.password===password);
+  
+  if(!student){showToast('❌ البيانات غير صحيحة','error');return;}
+  document.getElementById('loginCard').style.display = 'none'; 
+  currentStudent=student;
+  showStudent(student);
+}
+
+function loginAdmin()
+{
+  let email = document.getElementById('name').value.trim();
+  let password = document.getElementById('password').value.trim();
+  
+  if(!email || !password) {
+    showToast('⚠️ من فضلك أدخل البريد الإلكتروني وكلمة السر', 'error');
+    return;
+  }
+
+  showToast('جاري التحقق من الادمن');
+
+  auth.signInWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+    window.isAdminLoggedIn = true;
+    
+    document.getElementById('loginCard').style.display = 'none';
+    
+    showAdminPanel();
+    showToast('🔓 تم دخول الأدمن بنجاج');
+  })
+  .catch((error) => {
+    showToast('❌ بيانات الأدمن غير صحيحة ','error');
+    console.error("Auth Error:", error.message);
+  });
+}
+
+function getSuccessRate()
+{
+  let students=JSON.parse(localStorage.getItem('students'))||[];if(students.length===0)return 0;
+  let success=students.filter(s=>(s.subjects||[]).reduce((a,b)=>a+Number(b.grade||0),0)>=250).length;return Math.round((success/students.length)*100)
+}
+
+function getStudentSchedule(grade){
+  let schedules=JSON.parse(localStorage.getItem('schedules'))||{};
+  let table=schedules[grade];if(!table)return '<p>لا يوجد جدول دراسي</p>';
+  let html=`<div class='card'>
+  <div class='section-title'>📚 الجدول الدراسي</div>
+  <div class='table-box'>
+  <table><tr>
+  <th>اليوم</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>`;
+  for(let day in table){html+=`<tr><td>${day}</td><td>${table[day][0]||'-'}</td><td>${table[day][1]||'-'}</td><td>${table[day][2]||'-'}</td><td>${table[day][3]||'-'}</td><td>${table[day][4]||'-'}</td><td>${table[day][5]||'-'}</td></tr>`}html+='</table></div></div>';return html
+}
+
+function showStudent(student) {
+    // 1. تجهيز صفوف المواد من قاعدة البيانات
+    let rows = '';
+    (student.subjects || []).forEach(sub => {
+        rows += `<tr><td>${sub.name}</td><td>${sub.grade}</td></tr>`;
+    });
+
+    // 2. عرض البيانات في الواجهة
+    document.getElementById('result').innerHTML = `
+        <div class='section-title'>بيانات الطالب</div>
+        <img src='${student.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}' class='student-img'>
+  
+<button  class='pay action-btn' onclick='changeStudentPassword()'>🔐 تغيير كلمة السر</button>
+            
+        <div class='info-box'>👤 ${student.name}</div>
+        <div class='info-box'>🏫 ${student.grade}</div>
+        
+        
+        
+        <div class='info-box'>💰 المصاريف: ${student.feesPaid ? 'تم الدفع ✅' : 'غير مدفوع ❌'}</div>
+        <div class='info-box'>📅 الغياب: ${student.absent || 0} يوم</div>
+  
+    
+        
+<div id="studentNotificationsBox"></div>
+
+ <div class='card'>
+  <div class='section-title'>📊 كشف الدرجات والنتيجة</div>
+    <div class='table-box'>
+                <table>
+                    <tr><th>المادة</th><th>الدرجة</th></tr>
+                    ${rows || '<tr><td colspan="2">لا توجد درجات</td></tr>'}
+                </table>
+            </div>
+            <div style="margin-top:15px; padding:15px; background:#f4f4f4; border-radius:10px; color:#333; text-align:right;">
+                <p><strong>المجموع الكلي:</strong> ${student.total || 0}</p>
+                <p><strong>النسبة المئوية:</strong> ${student.percentage || 0}%</p>
+                <p><strong>التقدير العام:</strong> ${student.gradeStatus || '-'}</p>
+                <p><strong>حالة النجاح:</strong> ${student.resultStatus || '-'}</p>
+            </div>
+        </div>
+
+  <button class='pay action-btn' onclick='downloadStudentPDF()'>📥 تحميل النتيجة (PDF)</button>
+      
+      
+    
+        
+
+        
+        ${getStudentSchedule(student.grade)}
+        ${loadStudentReplies()}
+        
+        <div class='card ai-box'>
+            <div class='ai-title'>📩 إرسال استفسار للإدارة</div>
+            <input id='studentQuestion' placeholder='اكتب استفسارك هنا'>
+            <button class='ai-btn' onclick='sendQuestionToAdmin()'>📨 إرسال الاستفسار</button>
+            <div id='studentQuestionResult' class='ai-answer'>يمكنك إرسال أي استفسار للإدارة</div>
+        </div>
+        
+         <button class='logout' onclick='logout()'>تسجيل خروج</button>
+    `;
+    loadStudentNotifications();
+}
+
+
+
+function showAdminPanel()
+{
+  let students=JSON.parse(localStorage.getItem('students'))||[];
+  students.sort((a,b)=> (a.level || '').localeCompare(b.level || ''));
+  
+  let paid=students.filter(s=>s.feesPaid).length;
+  let studentsByGrade = '';
+  let grades = ['الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس'];
+
+  grades.forEach(grade=>{
+    let classStudents = students.filter(s=>s.grade===grade);
+    if(classStudents.length===0) return;
+
+    studentsByGrade += `
+    <div class="card">
+    <button class="admin" onclick="toggleClass('class${grade}')">📚 ${grade}</button>
+   
+    <div id="class${grade}" style="display:none;margin-top:10px">
+   
+    <input id="search${grade}" placeholder="🔍 البحث داخل الصف" onkeyup="searchInClass('search${grade}','table${grade}')">
+    <div class="table-box">
+    <table id="table${grade}">
+    
+    <tr><th>الطالب</th>
+    <th>المجموع</th>
+    <th>التقدير</th>
+    <th>الدفع</th>
+    <th>التحكم</th></tr>`;
+
+    classStudents.forEach(s=>{
+      studentsByGrade += `
+  <tr>
+  <td>${s.name}</td>
+  <td>${s.total || 0}</td>
+  <td>${s.gradeStatus || '-'}</td>
+  <td>${s.feesPaid ? '✅' : '❌'}</td>
+  <td>
+ 
+  <button onclick='editStudent(${s.id})'>✏️ تعديل</button>
+  <button class='pay' onclick='toggleFees(${s.id})'>💰 دفع</button>
+ 
+  <button class='danger' onclick='deleteStudent(${s.id})'>🗑 حذف</button>
+  </td>
+  </tr>`;
+
+    });
+    studentsByGrade += `</table></div></div></div>`;
+  });
+
+  document.getElementById('result').innerHTML=`<div class='card'>
+  
+   <button onclick='changeAdminData()'>🔐 تغيير باسوورد الأدمن 
+  </button>
+  
+  
+  <div class='section-title'>📊 الإحصائيات</div>
+  <div class='stats'>
+  
+  <div class='stat-box'>👨‍🎓 ${students.length}<br>طلاب</div>
+  
+  <div class='stat-box'>💰 ${paid}<br>مدفوع</div>
+  
+  <div class='stat-box'>❌ ${students.length-paid}<br>غير مدفوع</div>
+  
+  <div class='stat-box'>🎯 ${getSuccessRate()}%<br>نسبة النجاح</div></div></div>
+  
+  
+<div class='card'>
+    <div class='section-title'>📢 إرسال إشعار للطلاب</div>
+    <input id='adminNotification' placeholder='اكتب نص الإشعار هنا...'>
+<button class='admin' onclick='sendAdminNotification()'>إرسال الإشعار</button>
+
+  <button class='danger' onclick='deleteAllNotifications()'>🗑 مسح جميع الإشعارات القديمة</button>
+</div>
+
+
+  
+  <div class='card'>
+  <div class='section-title'>⚙️ إعدادات النظام</div>
+  <button onclick='changeSchoolName()'>🏫 تغيير اسم المدرسة</button>
+  <button class='danger' onclick='removeSchoolName()'>🗑 حذف اسم المدرسة</button>
+  
+ 
+  
+  </div>
+  <div class='card'>
+  <div class='section-title'>➕ إضافة طالب</div>
+  <input id='studentName' placeholder='الاسم'>
+  <input id='studentAge' type='number' placeholder='العمر'>
+  <input id='studentAddress' placeholder='العنوان'>
+  <input id='parentPhone' placeholder='رقم ولي الأمر'>
+  <select id='studentGrade'>
+  <option>الصف الأول</option><option>الصف الثاني</option><option>الصف الثالث</option><option>الصف الرابع</option><option>الصف الخامس</option><option>الصف السادس</option>
+  
+  
+  
+  <input id='studentPassword' maxlength='6' placeholder='كلمة السر 6 أرقام'>
+  
+  
+  
+  <textarea id='studentSubjects' placeholder='عربي:90'></textarea>
+  <textarea id='studentNotes' placeholder='ملاحظات الطالب'></textarea>
+  <!-- تم إزالة حقل رفع ملفات الصور من هنا نهائياً للخفة والأمان -->
+  <button onclick='addStudent()'>إضافة الطالب</button>
+  </div>
+  <div class='card'>
+  <div class='section-title'>📅 إدارة الجداول الدراسية</div>
+  <select id='tableGrade'>
+  <option>الصف الأول</option><option>الصف الثاني</option><option>الصف الثالث</option><option>الصف الرابع</option><option>الصف الخامس</option><option>الصف السادس</option>
+  </select>
+  <div class='table-box'>
+  <table><tr><th>اليوم</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+  <tbody id='scheduleInputs'></tbody>
+  </table>
+  </div>
+  <div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:15px'>
+  <button onclick='saveSchedule()'>💾 حفظ الجدول</button>
+  <button class='pay' onclick='clearSchedule()'>🗑 مسح الجدول</button>
+  <button class='admin' onclick='copySchedule()'>📋 نسخ جدول صف آخر</button>
+  </div>
+  </div> 
+  <div class='card'> 
+  <button class='admin' onclick='toggleInbox()'>📥 صندوق الوارد والتنبيهات</button>
+  
+  <button class='danger' onclick='clearInbox()'>🗑 مسح صندوق الوارد</button>
+  <div id='adminInbox' style='display:none;margin-top:15px'>
+  </div>
+  </div> 
+  <div class='card'>
+  <div class='section-title'>🔍 بحث عام عن الطلاب</div>
+  <input id='globalSearch' placeholder='اكتب اسم الطالب...' onkeyup='globalSearchStudents()'>
+  <div id='searchResultBox'></div>
+  </div>
+  
+  <div class='card'>
+  <button class='admin' onclick='showTopStudents()'>🏆 لوحة الأوائل</button>
+  
+  <div id='topStudentsBox' style='display:none'>
+  </div>
+  </div> 
+  <div class='section-title'>👨‍🎓 الطلاب حسب الصفوف</div>
+  ${studentsByGrade}
+ 
+  <button class='logout' onclick='logout()'>تسجيل خروج</button>`;
+  loadScheduleInputs();
+  loadAdminInbox();
+}
+
+function isDuplicateName(name)
+{
+  let students=JSON.parse(localStorage.getItem('students'))||[];
+  return students.some(s=>s.name===name)
+}
+
+// 🚀 الدالة أصبحت سريعة ومباشرة وبدون معالجة ملفات الصور الثقيلة
+function addStudent() 
+{
+  let name = document.getElementById('studentName').value.trim();
+  let grade = document.getElementById('studentGrade').value;
+  let password = document.getElementById('studentPassword').value.trim();
+  let subjectsText = document.getElementById('studentSubjects').value.trim();
+  
+  if(!name || !password){ showToast('❌ يرجى ملء الاسم وكلمة السر','error'); return; }
+  
+  let subjects = [];
+  subjectsText.split('\n').forEach(line => {
+    let parts = line.split(':');
+    if(parts.length === 2){ subjects.push({ name: parts[0], grade: parts[1] }); }
+  });
+  
+  let calc = calculateGradesAuto(subjects);
+  
+  let studentData = {
+    id: Date.now(),
+    name: name,
+    age: document.getElementById('studentAge').value.trim(),
+    address: document.getElementById('studentAddress').value.trim(),
+    parentPhone: document.getElementById('parentPhone').value.trim(),
+    notes: document.getElementById('studentNotes').value.trim(),
+    grade: grade,
+    level: calc.level, // ✅ تم إصلاح المتغير هنا
+    password: password,
+    subjects: subjects,
+    total: calc.total,
+    percentage: calc.percent,
+    gradeStatus: calc.grade,
+    resultStatus: calc.status,
+    image: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+    feesPaid: false,
+    absent: 0,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection('students').add(studentData)
+  .then(() => {
+    showToast('✅ تم إضافة الطالب بنجاح!');
+    showAdminPanel();
+  })
+  .catch((error) => {
+    showToast('❌ خطأ: ' + error.message, 'error');
+  });
+}
+
+
+function deleteStudent(id) {
+  if(!confirm('حذف الطالب؟')) return;
+  db.collection('students').where('id', '==', id).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      doc.ref.delete();
+    });
+    showToast('✅ تم الحذف من الطالب');
+  });
+}
+
+function toggleFees(id) {
+  db.collection('students').where('id', '==', id).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      let currentFees = doc.data().feesPaid;
+      doc.ref.update({ feesPaid: !currentFees });
+    });
+  });
+}
+
+function editStudent(id) {
+  let students = JSON.parse(localStorage.getItem('students')) || [];
+  let student = students.find(s => s.id === id);
+  if (!student) return;
+
+  // وضع البيانات في الحقول
+  document.getElementById('mStudentId').value = student.id;
+  document.getElementById('mName').value = student.name;
+  
+  // تحويل مصفوفة المواد الموجودة عند الطالب إلى نص يظهر في المربع
+let subjectsText = (student.subjects || []).map(s => `${s.name}:${s.grade}`).join('\n');
+document.getElementById('mSubjects').value = subjectsText;
+
+  
+  document.getElementById('mPassword').value = student.password;
+  
+  
+  
+  
+  document.getElementById('mNotes').value = student.notes || '';
+  document.getElementById('mGrade').value = student.grade || '';
+  
+  
+  
+  document.getElementById('mAddress').value = student.address || '';
+  document.getElementById('mPhone').value = student.parentPhone || '';
+  document.getElementById('mAbsent').value = student.absent || 0;
+
+  // إظهار النافذة
+  document.getElementById('editModal').style.display = 'block';
+}
+
+function saveModalChanges() {
+    // 1. الحصول على ID الطالب
+    let id = Number(document.getElementById('mStudentId').value);
+    
+    // 2. استخراج المواد والدرجات من مربع النصوص
+    let subjectsText = document.getElementById('mSubjects').value.trim();
+    let newSubjects = [];
+    
+    subjectsText.split('\n').forEach(line => {
+        let parts = line.split(':');
+        if(parts.length === 2) {
+            newSubjects.push({
+                name: parts[0].trim(), 
+                grade: Number(parts[1].trim())
+            });
+        }
+    });
+
+    // 3. المحرك الحسابي: يحسب المجموع، التقدير، النتيجة، والمستوى تلقائياً
+    let calc = calculateGradesAuto(newSubjects);
+
+    // 4. تجهيز بيانات التحديث
+    let updatedData = {
+        name: document.getElementById('mName').value,
+        password: document.getElementById('mPassword').value,
+        grade: document.getElementById('mGrade').value,
+        address: document.getElementById('mAddress').value,
+        parentPhone: document.getElementById('mPhone').value,
+        absent: document.getElementById('mAbsent').value,
+        notes: document.getElementById('mNotes').value,
+        subjects: newSubjects,      
+        total: calc.total,          
+        percentage: calc.percent,   
+        gradeStatus: calc.grade,    
+        resultStatus: calc.status,  
+        level: calc.level          
+    };
+
+    // 5. الحفظ في Firebase
+    db.collection('students').where('id', '==', id).get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            doc.ref.update(updatedData);
+        });
+        
+        // إغلاق المودال
+        document.getElementById('editModal').style.display = 'none';
+        showToast('✅ تم حفظ التعديلات وإعادة الحساب بنجاح!');
+        
+        // تحديث اللوحة فوراً بدلاً من عمل Refresh للصفحة كاملة
+        showAdminPanel(); 
+    })
+    .catch((error) => {
+        console.error("خطأ في الحفظ: ", error);
+        showToast('❌ حدث خطأ أثناء الحفظ', 'error');
+    });
+}
+
+function loadScheduleInputs()
+{
+  let html='';
+  schoolDays.forEach(day=>{
+    html+=`<tr><td class='schedule-day'>${day}</td>
+    <td><input class='schedule-input' id='${day}1' placeholder='المادة'></td>
+    <td><input class='schedule-input' id='${day}2' placeholder='المادة'></td>
+    <td><input class='schedule-input' id='${day}3' placeholder='المادة'></td>
+    <td><input class='schedule-input' id='${day}4' placeholder='المادة'></td>
+    <td><input class='schedule-input' id='${day}5' placeholder='المادة'></td>
+    <td><input class='schedule-input' id='${day}6' placeholder='المادة'></td></tr>`;
+  });
+  let box = document.getElementById('scheduleInputs');
+  if(box) {
+    box.innerHTML=html;
+    loadSavedSchedule();
+  }
+}
+
+function loadSavedSchedule()
+{
+    let grade=document.getElementById('tableGrade');
+    if(!grade) return;
+
+    let schedules=JSON.parse(localStorage.getItem('schedules'))||{};
+    let table=schedules[grade.value];
+    if(!table) return;
+
+    schoolDays.forEach(day=>{
+        for(let i=1;i<=6;i++){
+            let input=document.getElementById(`${day}${i}`);
+            if(input){ input.value = table[day]?.[i-1] || ''; }
+        }
+    });
+}
+
+function saveSchedule()
+{
+  let grade=document.getElementById('tableGrade').value;
+  let schedules=JSON.parse(localStorage.getItem('schedules'))||{};
+  schedules[grade]={};
+  schoolDays.forEach(day=>{schedules[grade][day]=[];
+    for(let i=1;i<=6;i++){
+      schedules[grade][day].push(document.getElementById(`${day}${i}`).value)
+    }
+  });
+  localStorage.setItem('schedules',JSON.stringify(schedules));
+  showToast('✅ تم حفظ الجدول')
+}
+
+function clearSchedule()
+{
+  if(!confirm('هل تريد مسح الجدول؟')) return;
+  schoolDays.forEach(day=>{
+    for(let i=1;i<=6;i++){
+      let input=document.getElementById(`${day}${i}`);
+      if(input){input.value='';}
+    }
+  })
+  showToast('✅ تم مسح الجدول');
+}
+
+function copySchedule(){
+  let fromGrade = prompt('اكتب اسم الصف المراد نسخ جدوله');
+  if(!fromGrade) return;
+  let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
+  if(!schedules[fromGrade]){ showToast('❌ هذا الصف لا يحتوي على جدول', 'error'); return; }
+
+  schoolDays.forEach(day => {
+    for(let i = 1; i <= 6; i++){
+      let input = document.getElementById(`${day}${i}`);
+      // تم تصحيح [index-1] إلى [i-1]
+      if(input){ input.value = schedules[fromGrade][day][i - 1] || ''; }
+    }
+  });
+  showToast('✅ تم نسخ الجدول بنجاح');
+}
+
+
+
+document.addEventListener('change',(e)=>{
+  if(e.target.id==='tableGrade'){ loadSavedSchedule(); }
+});
+
+function changeAdminData()
+{
+  let user = auth.currentUser;
+  if (!user) {
+    showToast('❌ يجب تسجيل الدخول كأدمن أولاً لتغيير البيانات', 'error');
+    return;
+  }
+
+  let newPass = prompt('اكتب كلمة السر الجديدة للأدمن (يجب ألا تقل عن 6 خانات):');
+  if (!newPass || newPass.trim().length < 6) { 
+    showToast('❌ كلمة السر ضعيفة! يجب أن تكون 6 خانات على الأقل','error'); 
+    return; 
+  }
+
+  showToast('🔄 جاري تحديث كلمة السر على السيرفر المشفّر...');
+
+  user.updatePassword(newPass.trim()).then(() => {
+    showToast('✅ تم تحديث كلمة سر الأدمن على السيرفر بنجاح!');
+  }).catch((error) => {
+    showToast('❌ فشل التحديث السريع: يرجى تسجيل الخروج والدخول مجدداً ثم المحاولة','error');
+    console.error(error);
+  });
+}
+
+function printResult() { window.print(); }
+
+function logout()
+{
+  auth.signOut().then(() => {
+    window.isAdminLoggedIn = false;
+    
+    currentStudent = null;
+    
+    document.getElementById('loginCard').style.display = 'block';
+    
+    document.getElementById('result').innerHTML='';
+    
+    if(document.getElementById('name')) document.getElementById('name').value = '';
+    
+    if(document.getElementById('password')) document.getElementById('password').value = '';
+    
+    showToast('🔒 تم تسجيل الخروج وتأمين النظام بنجاح');
+  });
+}
+
+function changeStudentPassword()
+{
+  if(!currentStudent){showToast('❌ لا يوجد طالب مسجل','error');return;}
+  let oldPass=prompt('اكتب كلمة السر الحالية');
+  if(oldPass!==currentStudent.password){showToast('❌ كلمة السر الحالية غير صحيحة','error');return;}
+  let newPass=prompt('اكتب كلمة السر الجديدة (6 أرقام)');
+  if(!newPass || newPass.length!==6 || isNaN(newPass)){showToast('❌ كلمة السر يجب أن تكون 6 أرقام','error');return;}
+  let confirmPass=prompt('تأكيد كلمة السر الجديدة');
+  if(newPass!==confirmPass){showToast('❌ كلمتا السر غير متطابقتين','error');return;}
+
+  let students=JSON.parse(localStorage.getItem('students'))||[];
+  students=students.map(s=>{
+    if(s.id===currentStudent.id){ s.password=newPass; currentStudent.password=newPass; }
+    return s;
+  });
+  localStorage.setItem('students',JSON.stringify(students));
+  showToast('✅ تم تغيير كلمة السر بنجاح');
+}
+
+function changeSchoolName(){
+  let name=prompt('اكتب اسم المدرسة');
+  if(!name)return;
+  localStorage.setItem('schoolName',name);
+  let title=document.getElementById('schoolName');
+  if(title) {
+    title.innerText=name;
+    title.style.display='block';
+  }
+  showToast('✅ تم تغيير اسم المدرسة');
+}
+
+function toggleInbox()
+{
+  let inbox=document.getElementById('adminInbox')
+  if(!inbox) return;
+  if(inbox.style.display==='none' || inbox.style.display===''){
+    inbox.style.display='block';
+    loadAdminInbox();
+  }else{
+    inbox.style.display='none';
+  }
+}
+
+function clearInbox()
+{
+  if(!confirm('هل تريد مسح جميع الرسائل؟')) return;
+  localStorage.removeItem('adminInbox');
+  let box=document.getElementById('adminInbox');
+  if(box){box.innerHTML=`<div class='info-box'>تم مسح جميع الرسائل</div>`;}
+  showToast('✅ تم مسح صندوق الوارد');
+}
+
+function removeSchoolName()
+{
+  if(!confirm('هل تريد حذف اسم المدرسة?')) return;
+  localStorage.removeItem('schoolName');
+  let title=document.getElementById('schoolName');
+  if(title) { title.innerText=''; title.style.display='none'; }
+  showToast('✅ تم حذف اسم المدرسة');
+}
+
+function sendQuestionToAdmin()
+{
+  let q=document.getElementById('studentQuestion').value.trim();
+  let result=document.getElementById('studentQuestionResult');
+  if(!q){showToast('❌ اكتب الاستفسار','error');return;}
+
+  let inbox=JSON.parse(localStorage.getItem('adminInbox'))||[];
+  inbox.push({
+    id:Date.now(),
+    student:currentStudent.name,
+    message:q,
+    reply:'',
+    date:new Date().toLocaleString()
+  });
+  localStorage.setItem('adminInbox',JSON.stringify(inbox));
+  result.innerHTML=`✅ تم إرسال الاستفسار للإدارة بنجاح`;
+  document.getElementById('studentQuestion').value='';
+  showToast('✅ تم إرسال الاستفسار');
+}
+
+function loadAdminInbox()
+{
+  let inboxBox=document.getElementById('adminInbox');
+  if(!inboxBox) return;
+  let inbox=JSON.parse(localStorage.getItem('adminInbox'))||[];
+  if(inbox.length===0){
+    inboxBox.innerHTML=`<div class='info-box'>لا توجد رسائل</div>`;
+    return;
+  }
+  let html='';
+  inbox.reverse().forEach(msg=>{
+    html+=`<div class='info-box'>👤 الطالب: ${msg.student}<hr>📩 الاستفسار:<br>${msg.message}<hr>🕒 ${msg.date}<hr>
+    <textarea id='reply${msg.id}' placeholder='اكتب الرد هنا'>${msg.reply || ''}</textarea>
+    <button onclick='sendReply(${msg.id})' class='admin'>📨 إرسال الرد</button></div>`;
+  });
+  inboxBox.innerHTML=html;
+}
+
+function sendReply(id)
+{
+  let inbox=JSON.parse(localStorage.getItem('adminInbox'))||[];
+  let replyInput=document.getElementById(`reply${id}`);
+  if(!replyInput) return;
+  let reply=replyInput.value.trim();
+  if(!reply){showToast('❌ اكتب الرد','error');return;}
+
+  inbox=inbox.map(msg=>{
+    if(msg.id===id){msg.reply=reply;}
+    return msg;
+  });
+  localStorage.setItem('adminInbox',JSON.stringify(inbox));
+  showToast('✅ تم إرسال الرد');
+  loadAdminInbox();
+}
+
+function loadStudentReplies()
+{
+  if(!currentStudent) return '';
+  let inbox=JSON.parse(localStorage.getItem('adminInbox'))||[];
+  let replies=inbox.filter(msg=> msg.student===currentStudent.name && msg.reply);
+  if(replies.length===0){
+    return `<div class='card'><div class='section-title'>📬 ردود الإدارة</div><div class='info-box'>لا توجد ردود حتى الآن</div></div>`;
+  }
+  let html=`<div class='card'><div class='section-title'>📬 ردود الإدارة</div>`;
+  replies.reverse().forEach(msg=>{
+    html+=`<div class='info-box'>📩 استفسارك:<br>${msg.message}<hr>✅ رد الإدارة:<br>${msg.reply}</div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+function toggleClass(id)
+{
+  let box = document.getElementById(id);
+  if(!box) return;
+  box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+}
+
+function searchInClass(inputId, tableId){
+  let input = document.getElementById(inputId).value.toLowerCase();
+  let table = document.getElementById(tableId);
+  let rows = table.getElementsByTagName('tr');
+  for(let i=1;i<rows.length;i++){
+    let txt = rows[i].textContent.toLowerCase();
+    rows[i].style.display = txt.includes(input) ? '' : 'none';
+  }
+}
+
+function globalSearchStudents()
+{
+  let input = document.getElementById('globalSearch').value.toLowerCase();
+  
+  let box = document.getElementById('searchResultBox');
+  
+  if(!input){ box.innerHTML = ''; return; }
+
+  let students = JSON.parse(localStorage.getItem('students')) || [];
+  
+  let filtered = students.filter(s => s.name.toLowerCase().includes(input));
+  
+  if(filtered.length === 0){
+    box.innerHTML = `<div class='info-box'>❌ لا يوجد طلاب بهذا الاسم</div>`;
+    return;
+  }
+  let html = `<div class='table-box'><table><tr><th>الطالب</th><th>الصف</th><th>النتيجة</th><th>الدفع</th></tr>`;
+  filtered.forEach(s=>{
+    html += `<tr><td>${s.name}</td><td>${s.grade}</td><td>${s.result || '-'}</td><td>${s.feesPaid ? '✅' : '❌'}</td></tr>`;
+  });
+  html += `</table></div>`;
+  box.innerHTML = html;
+}
+
+function showTopStudents()
+{
+  let box = document.getElementById("topStudentsBox");
+  if(!box) return;
+  if(box.style.display === "block"){ box.style.display = "none"; return; }
+
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+  let grades = ['الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس'];
+  
+  // ترتيب شامل لجميع الطلاب
+  let allStudents = [...students].sort((a,b) => {
+    let totalA = (a.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+    let totalB = (b.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+    return totalB - totalA;
+  });
+
+  let html = `<div class="card"><div class="section-title">🏆 أوائل المدرسة</div><table><tr><th>الترتيب</th><th>الطالب</th><th>الصف</th><th>المجموع</th></tr>`;
+  allStudents.slice(0, 10).forEach((s, index) => {
+    let total = (s.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+    html += `<tr><td>${index + 1}</td><td>${s.name}</td><td>${s.grade}</td><td>${total}</td></tr>`;
+  });
+  html += `</table></div>`;
+
+  // إضافة أوائل كل صف
+  grades.forEach(grade => {
+    let classStudents = students.filter(s => s.grade === grade).sort((a,b) => {
+      let totalA = (a.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+      let totalB = (b.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+      return totalB - totalA;
+    });
+    
+    if(classStudents.length > 0) {
+      html += `<div class="card"><div class="section-title">🏅 أوائل ${grade}</div><table><tr><th>الترتيب</th><th>الطالب</th><th>المجموع</th></tr>`;
+      classStudents.slice(0, 3).forEach((s, index) => {
+        let total = (s.subjects || []).reduce((x,y) => x + Number(y.grade || 0), 0);
+        html += `<tr><td>${index + 1}</td><td>${s.name}</td><td>${total}</td></tr>`;
+      });
+      html += `</table></div>`;
+    }
+  });
+
+  box.innerHTML = html;
+  box.style.display = "block";
+} 
+function downloadStudentPDF() {
+    if (!currentStudent) {
+        showToast('❌ لا يوجد طالب حالي للطباعة', 'error');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // إعداد الخطوط (دعم اللغة العربية يحتاج خط خاص، لكن سنبدأ بعرض البيانات)
+    doc.setFont("helvetica");
+    doc.text("نظام مدرستي - بيانات الطالب", 150, 20);
+    doc.text("--------------------------", 150, 25);
+    doc.text("اسم الطالب: " + currentStudent.name, 150, 40);
+    doc.text("الصف الدراسي: " + currentStudent.grade, 150, 50);
+    doc.text("النتيجة: " + (currentStudent.result || 'لا توجد'), 150, 60);
+    doc.text("المستوى: " + currentStudent.level, 150, 70);
+    doc.text("المصاريف: " + (currentStudent.feesPaid ? 'تم الدفع' : 'غير مدفوع'), 150, 80);
+
+    // حفظ الملف
+    doc.save(currentStudent.name + "_Report.pdf");
+    showToast('✅ تم تحميل ملف الـ PDF بنجاح');
+}
+// أضف 'level' إلى الدالة الحسابية
+function calculateGradesAuto(subjects) {
+    let total = 0;
+    subjects.forEach(sub => total += Number(sub.grade || 0));
+    let max = subjects.length * 100;
+    let percent = max > 0 ? ((total / max) * 100).toFixed(1) : 0;
+    let status = total >= (max * 0.5) ? 'ناجح ✅' : 'راسب ❌';
+    let grade = percent >= 90 ? 'ممتاز 🌟' : (percent >= 80 ? 'جيد جداً 🎖️' : (percent >= 65 ? 'جيد 👍' : (percent >= 50 ? 'مقبول 😐' : 'ضعيف ⚠️')));
+    
+    // المستوى التلقائي
+    let level = percent >= 85 ? 'متقدم' : (percent < 50 ? 'مبتدئ' : 'متوسط');
+    
+    return { total, percent, status, grade, level }; // لاحظ أننا أضفنا level هنا
+}
+
+// وفي دالة saveModalChanges تأكد أن الـ updatedData تستخدمها:
+let updatedData = {
+    // ... البيانات الأخرى ...
+    resultStatus: calc.status,
+    level: calc.level, // هذا هو السطر الذي يربط المستوى المحسوب تلقائياً
+    // ...
+};
+
+function loadStudentNotifications() {
+    let box = document.getElementById('studentNotificationsBox');
+    if (!box) return;
+
+    // قمنا بتحديد limit(5) لضمان عدم تراكم العرض
+    db.collection('notifications')
+      .orderBy('timestamp', 'desc')
+      .limit(5) 
+      .get()
+      .then((snapshot) => {
+          if (snapshot.empty) return;
+          
+          let html = `<div class='card'><div class='section-title'>📢 إعلانات المدرسة</div>`;
+          snapshot.forEach((doc) => {
+              html += `<p style="padding:10px; border-bottom:1px solid #eee;">🔔 ${doc.data().message}</p>`;
+          });
+          html += `</div>`;
+          box.innerHTML = html;
+      });
+}
+
+function sendAdminNotification() {
+    let msg = document.getElementById('adminNotification').value.trim();
+    if(!msg) {
+        showToast('❌ اكتب نص الإشعار أولاً', 'error');
+        return;
+    }
+
+    db.collection('notifications').add({
+        message: msg,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        showToast('✅ تم إرسال الإشعار لجميع الطلاب');
+        document.getElementById('adminNotification').value = '';
+    })
+    .catch((error) => {
+        showToast('❌ حدث خطأ في الإرسال', 'error');
+    });
+}
+
+function deleteAllNotifications() {
+    if (!confirm('⚠️ هل أنت متأكد؟ سيتم حذف جميع الإشعارات !')) return;
+    
+    db.collection('notifications').get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            doc.ref.delete();
+        });
+        showToast('✅ تم تنظيف الإشعارات بنجاح');
+    });
+}
+
+</script>
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; text-align:center; padding-top:20px; overflow-y:auto;">
+  <div style="background:white; width:95%; max-width:400px; margin:auto; padding:20px; border-radius:15px; direction:rtl; text-align:right; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+    <h3 style="color:#16a085; margin-bottom:15px; text-align:center;">تعديل بيانات الطالب</h3>
+    
+    <label>الاسم:</label>
+    <input id="mName" placeholder="الاسم">
+    
+    <label>كلمة السر (6 أرقام):</label>
+    <input id="mPassword" type="password" placeholder="كلمة السر">
+    
+    
+    
+    <div class="form-group">
+    <label>(اكتب المواد في كل سطر:)</label>
+    <textarea id="mSubjects" placeholder="مثال:
+عربي:90
+رياضيات:85"></textarea>
+</div>
+
+    
+    <label>الملاحظات:</label>
+    <textarea id="mNotes" placeholder="الملاحظات"></textarea>
+    
+    <label>الصف:</label>
+    <input id="mGrade" placeholder="الصف">
+    
+    
+    <label>العنوان:</label>
+    <input id="mAddress" placeholder="العنوان">
+    
+    <label>رقم ولي الأمر:</label>
+    <input id="mPhone" placeholder="رقم الهاتف">
+    
+    <label>أيام الغياب:</label>
+    <input id="mAbsent" type="number" placeholder="عدد أيام الغياب">
+    
+    <input type="hidden" id="mStudentId">
+    
+    <button onclick="saveModalChanges()" style="background:#27ae60; color:white; width:100%; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;">حفظ التعديلات</button>
+    <button onclick="closeModal()" style="background:#c0392b; color:white; width:100%; border:none; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer;">إغلاق</button>
+  </div>
+</div>
+
+</body>
+</html>
+ 
+ 
+ 
+ 
